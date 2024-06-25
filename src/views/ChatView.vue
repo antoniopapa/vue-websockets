@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import axios from "axios";
 import {io} from "socket.io-client";
 import {useRoute} from "vue-router";
@@ -12,12 +12,18 @@ const route = useRoute();
 const userStore = useUserStore();
 const message = ref('');
 const messages = ref([]);
+const page = ref(1);
+const lastPage = ref(false)
 
+const load = async () => {
+  const {data} = await axios.get(`users/${route.params.id}/messages?page=${page.value}`);
+  messages.value = page.value === 1 ? data.messages : [...data.messages, ...messages.value];
+  lastPage.value = data.messages.length === 0;
+}
 
-onMounted(async () => {
-  const {data} = await axios.get(`users/${route.params.id}/messages`);
-  messages.value = data.messages;
-})
+onMounted(() => load())
+
+watch(page, () => load())
 
 socket.on('message', (msg) => {
   messages.value = [...messages.value, msg]
@@ -39,6 +45,10 @@ const submit = async () => {
   </div>
 
   <div id="conversation">
+    <div class="text-center py-1" v-if="!lastPage">
+      <a href="javascript:void(0)" class="alert-link" @click="page++">Load more recent</a>
+    </div>
+
     <div class="row pt-2" v-for="msg of messages">
       <div class="col-6" v-if="msg.sender?.id === userStore.user.id"></div>
       <div class="col-6" v-if="msg.type ==='text'">
