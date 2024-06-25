@@ -2,6 +2,7 @@ import {createRouter, createWebHistory} from 'vue-router'
 import ChatView from "@/views/ChatView.vue";
 import RegisterView from "@/views/RegisterView.vue";
 import LoginView from "@/views/LoginView.vue";
+import Secure from "@/components/Secure.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,8 +16,14 @@ const router = createRouter({
             component: LoginView
         },
         {
-            path: '/',
-            component: ChatView
+            path: '',
+            component: Secure,
+            children: [
+                {
+                    path: '',
+                    component: ChatView
+                }
+            ]
         }
     ]
 })

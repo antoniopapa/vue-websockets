@@ -8,7 +8,9 @@ const router = useRouter()
 const submit = async (e) => {
   const form = new FormData(e.target);
   const inputs = Object.fromEntries(form.entries());
-  await axios.post('login', inputs);
+  const {data} = await axios.post('login', inputs);
+  localStorage.setItem("token", data["jwt"]);
+  axios.defaults.headers["Authorization"] = `Bearer ${data["jwt"]}`;
   await router.push('/');
 }
 </script>
