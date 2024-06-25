@@ -4,6 +4,7 @@ import {computed, ref} from "vue";
 
 export const useUserStore = defineStore('user', () => {
     const user = ref({
+        id: 0,
         first_name: '',
         last_name: '',
         email: '',
