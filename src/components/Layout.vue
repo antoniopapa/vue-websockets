@@ -11,7 +11,7 @@ const load = async () => {
   rooms.value = data;
 }
 
-// onMounted(() => load());
+onMounted(() => load());
 
 watch(search, () => load());
 
@@ -53,9 +53,9 @@ const showLastMessage = (last_message) => {
           <router-link v-for="room of rooms" :to="`/rooms/${room.id}`" class="list-group-item list-group-item-action py-3 lh-sm">
             <div class="d-flex w-100 align-items-center justify-content-between">
               <strong class="mb-1">{{room.title}}</strong>
-              <small class="text-body-secondary"></small>
+              <small class="text-body-secondary">{{showDate(room.last_message)}}</small>
             </div>
-            <div class="col-10 mb-1 small"></div>
+            <div class="col-10 mb-1 small">{{showLastMessage(room.last_message)}}</div>
           </router-link>
 
           <router-link to="/rooms/create" class="btn btn-primary my-2">Create Room</router-link>
