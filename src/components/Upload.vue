@@ -10,9 +10,8 @@ const upload = async (files) => {
 
   const formData = new FormData();
   formData.append("image", file);
-  formData.append("receiver_id", route.params.id);
 
-  await axios.post('images', formData);
+  await axios.post(`rooms/${route.params.id}/images`, formData);
 }
 
 </script>

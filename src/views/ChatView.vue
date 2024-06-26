@@ -12,11 +12,16 @@ const route = useRoute();
 const userStore = useUserStore();
 const message = ref('');
 const messages = ref([]);
+const room = ref({
+  title: '',
+  members: []
+});
 const page = ref(1);
 const lastPage = ref(false)
 
 const load = async () => {
-  const {data} = await axios.get(`users/${route.params.id}/messages?page=${page.value}`);
+  const {data} = await axios.get(`rooms/${route.params.id}/messages?page=${page.value}`);
+  room.value = data.room;
   messages.value = page.value === 1 ? data.messages : [...data.messages, ...messages.value];
   lastPage.value = data.messages.length === 0;
 }
@@ -25,13 +30,20 @@ onMounted(() => load())
 
 watch(page, () => load())
 
-socket.on('message', (msg) => {
-  messages.value = [...messages.value, msg]
+watch(route, () => {
+  page.value = 1;
+  lastPage.value = false;
+  load()
+})
+
+socket.on('message', (msg, rm) => {
+  if (parseInt(route.params.id) === parseInt(rm.id)) {
+    messages.value = [...messages.value, msg]
+  }
 })
 
 const submit = async () => {
-  await axios.post('messages', {
-    receiver_id: route.params.id,
+  await axios.post(`rooms/${route.params.id}/messages`, {
     content: message.value
   })
 
@@ -41,7 +53,7 @@ const submit = async () => {
 
 <template>
   <div id="head" class="py-3 lh-sm border-bottom">
-    <strong class="mb-1">Members: </strong>
+    <strong class="mb-1">Members: {{room.members.map(m => m.first_name + " " + m.last_name).join(", ")}}</strong>
   </div>
 
   <div id="conversation">

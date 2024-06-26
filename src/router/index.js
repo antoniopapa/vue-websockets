@@ -35,7 +35,7 @@ const router = createRouter({
                     component: Layout,
                     children: [
                         {
-                            path: '/users/:id',
+                            path: '/rooms/:id',
                             component: ChatView
                         }
                     ]
