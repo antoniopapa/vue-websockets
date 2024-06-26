@@ -5,6 +5,7 @@ import LoginView from "@/views/LoginView.vue";
 import Secure from "@/components/Secure.vue";
 import AccountView from "@/views/AccountView.vue";
 import Layout from "@/components/Layout.vue";
+import RoomCreateView from "@/views/RoomCreateView.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,6 +25,10 @@ const router = createRouter({
                 {
                     path: '/account',
                     component: AccountView
+                },
+                {
+                    path: '/rooms/create',
+                    component: RoomCreateView
                 },
                 {
                     path: '',
