@@ -3,17 +3,41 @@
 import {onMounted, ref, watch} from "vue";
 import axios from "axios";
 
-const users = ref([]);
+const rooms = ref([]);
 const search = ref('')
 
 const load = async () => {
-  const {data} = await axios.get(`users?name=${search.value}`);
-  users.value = data;
+  const {data} = await axios.get(`rooms?name=${search.value}`);
+  rooms.value = data;
 }
 
-onMounted(() => load());
+// onMounted(() => load());
 
 watch(search, () => load());
+
+const showDate = (last_message) => {
+  if (last_message === null){
+    return ""
+  }
+
+  return new Date(last_message.created_at).toLocaleDateString('en-US', {
+    weekday: 'short',
+    hour: 'numeric',
+    minute: 'numeric'
+  })
+}
+
+const showLastMessage = (last_message) => {
+  if (last_message === null){
+    return ""
+  }
+
+  if (last_message.type === 'image'){
+    return "image";
+  }
+
+  return last_message.content;
+}
 
 </script>
 
@@ -26,13 +50,15 @@ watch(search, () => load());
         </div>
 
         <div class="list-group list-group-flush border-bottom scrollarea">
-          <router-link v-for="user of users" :to="`/users/${user.id}`" class="list-group-item list-group-item-action py-3 lh-sm">
+          <router-link v-for="room of rooms" :to="`/rooms/${room.id}`" class="list-group-item list-group-item-action py-3 lh-sm">
             <div class="d-flex w-100 align-items-center justify-content-between">
-              <strong class="mb-1">{{user.first_name}} {{user.last_name}}</strong>
+              <strong class="mb-1">{{room.title}}</strong>
               <small class="text-body-secondary"></small>
             </div>
             <div class="col-10 mb-1 small"></div>
           </router-link>
+
+          <router-link to="/rooms/create" class="btn btn-primary my-2">Create Room</router-link>
         </div>
       </div>
     </div>
